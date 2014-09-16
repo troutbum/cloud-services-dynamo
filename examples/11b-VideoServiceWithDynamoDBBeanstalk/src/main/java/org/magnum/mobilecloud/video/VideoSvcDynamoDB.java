@@ -2,7 +2,6 @@
  * 
  * VideoLike project ported to AWS DynamoDB
  *
- * 
  */
 
 package org.magnum.mobilecloud.video;
@@ -49,17 +48,17 @@ public class VideoSvcDynamoDB {
 	@Autowired
 	private VideoRepository videos;
 		
-	// GET /video 
-	// Requests to VIDEO_SVC_PATH and returns the current list of 
-	// videos in memory. Spring automatically converts
-	// the list of videos to JSON because of the @ResponseBody
-	// annotation.
+//	// GET /video 
+//	// Requests to VIDEO_SVC_PATH and returns the current list of 
+//	// videos in memory. Spring automatically converts
+//	// the list of videos to JSON because of the @ResponseBody
+//	// annotation.
+
 	@RequestMapping(value=VideoSvcApi.VIDEO_SVC_PATH, method=RequestMethod.GET)
-	public @ResponseBody Collection<Video> getVideoList(){			
-		Collection<Video> allVideos = videos.findAll();
-		return allVideos;
+	public @ResponseBody Iterable<Video> getVideoList(){
+		return videos.findAll();
 	}
-	
+		
 	// GET /video/search/findByName?title={title}
 	// Requests to /video/find and returns all Videos
 	// that have a title (e.g., Video.name) matching the "title" request
@@ -145,92 +144,92 @@ public class VideoSvcDynamoDB {
 //		return base;
 //	}
 	
-//	POST /video/{id}/like
-//	Allows a user to like a video. Returns 200 Ok on success, 404 if the video is not found, 
-//	or 400 if the user has already liked the video.
-//	The service should should keep track of which users have liked a video and prevent a user from liking a video twice. 
-//  If a user tries to like a video a second time, the operation should fail and return 400 Bad Request.
-	@RequestMapping(value=VideoSvcApi.VIDEO_SVC_PATH + "/{id}/like", method = RequestMethod.POST)
-	public ResponseEntity<Void> likeVideo(
-			@PathVariable("id") long id,
-			Principal p) {
-
-		// Check if id exists in repository
-		if (videos.exists(id) == false) {
-			return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
-		}
-		
-		// Get username of current login account
-		String username = p.getName();	
-		// Get video and list of usernames that like
-		Video v = videos.findOne(id);
-		List<String> likesUsernames = v.getLikesUsernames();  
-		
-		// Checks if the user has already liked the video (returns 400 Bad Request)
-		if (likesUsernames.contains(username)) {
-			return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
-		} 
-		
-		// keep track of users have liked a video
-		likesUsernames.add(username);
-		v.setLikesUsernames(likesUsernames);
-		v.setLikes(likesUsernames.size());
-		videos.save(v);
-		return new ResponseEntity<Void>(HttpStatus.OK);
-	}		
-	
-//	POST /video/{id}/unlike
-//	Allows a user to unlike a video that he/she previously liked. Returns 200 OK on success, 
-//	404 if the video is not found, and a 400 if the user has not previously liked the specified video.
-	@RequestMapping(value=VideoSvcApi.VIDEO_SVC_PATH + "/{id}/unlike", method = RequestMethod.POST)
-	public ResponseEntity<Void> unlikeVideo(
-			@PathVariable("id") long id,
-			Principal p) {
-
-		// Check if id exists in repository
-		if (videos.exists(id) == false) {
-			return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
-		}
-		
-		// Get username of current login account
-		String username = p.getName();
-		// Get video and list of usernames that like
-		Video v = videos.findOne(id);
-		List<String> likesUsernames = v.getLikesUsernames();  
-		
-		// Checks if the user has not previously liked the video (returns 400 Bad Request)
-		if (!likesUsernames.contains(username)) {
-			return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
-		} 
-		
-		// keep track of users have liked a video
-		likesUsernames.remove(username);
-		v.setLikesUsernames(likesUsernames);
-		v.setLikes(likesUsernames.size());
-		videos.save(v);
-		return new ResponseEntity<Void>(HttpStatus.OK);
-	}
-
-	//	GET /video/{id}/likedby
-	//	Returns a list of the string usernames of the users that have liked the specified video. 
-	//	If the video is not found, a 404 error should be generated.	
-	@RequestMapping(value=VideoSvcApi.VIDEO_SVC_PATH + "/{id}/likedby", method = RequestMethod.GET)
-	public @ResponseBody List<String> getUsersWhoLikedVideo(
-			@PathVariable("id") long id,
-			HttpServletResponse response) throws IOException {
-
-		// Check if id exists in repository
-		if (videos.exists(id) == false) {
-			response.sendError(404);
-			return null;
-		}
-		
-		// Get video and list of usernames that like
-		Video v = videos.findOne(id);
-		List<String> likesUsernames = v.getLikesUsernames();  
-
-		return likesUsernames;
-	}
+////	POST /video/{id}/like
+////	Allows a user to like a video. Returns 200 Ok on success, 404 if the video is not found, 
+////	or 400 if the user has already liked the video.
+////	The service should should keep track of which users have liked a video and prevent a user from liking a video twice. 
+////  If a user tries to like a video a second time, the operation should fail and return 400 Bad Request.
+//	@RequestMapping(value=VideoSvcApi.VIDEO_SVC_PATH + "/{id}/like", method = RequestMethod.POST)
+//	public ResponseEntity<Void> likeVideo(
+//			@PathVariable("id") long id,
+//			Principal p) {
+//
+//		// Check if id exists in repository
+//		if (videos.exists(id) == false) {
+//			return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
+//		}
+//		
+//		// Get username of current login account
+//		String username = p.getName();	
+//		// Get video and list of usernames that like
+//		Video v = videos.findOne(id);
+//		List<String> likesUsernames = v.getLikesUsernames();  
+//		
+//		// Checks if the user has already liked the video (returns 400 Bad Request)
+//		if (likesUsernames.contains(username)) {
+//			return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
+//		} 
+//		
+//		// keep track of users have liked a video
+//		likesUsernames.add(username);
+//		v.setLikesUsernames(likesUsernames);
+//		v.setLikes(likesUsernames.size());
+//		videos.save(v);
+//		return new ResponseEntity<Void>(HttpStatus.OK);
+//	}		
+//	
+////	POST /video/{id}/unlike
+////	Allows a user to unlike a video that he/she previously liked. Returns 200 OK on success, 
+////	404 if the video is not found, and a 400 if the user has not previously liked the specified video.
+//	@RequestMapping(value=VideoSvcApi.VIDEO_SVC_PATH + "/{id}/unlike", method = RequestMethod.POST)
+//	public ResponseEntity<Void> unlikeVideo(
+//			@PathVariable("id") long id,
+//			Principal p) {
+//
+//		// Check if id exists in repository
+//		if (videos.exists(id) == false) {
+//			return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
+//		}
+//		
+//		// Get username of current login account
+//		String username = p.getName();
+//		// Get video and list of usernames that like
+//		Video v = videos.findOne(id);
+//		List<String> likesUsernames = v.getLikesUsernames();  
+//		
+//		// Checks if the user has not previously liked the video (returns 400 Bad Request)
+//		if (!likesUsernames.contains(username)) {
+//			return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
+//		} 
+//		
+//		// keep track of users have liked a video
+//		likesUsernames.remove(username);
+//		v.setLikesUsernames(likesUsernames);
+//		v.setLikes(likesUsernames.size());
+//		videos.save(v);
+//		return new ResponseEntity<Void>(HttpStatus.OK);
+//	}
+//
+//	//	GET /video/{id}/likedby
+//	//	Returns a list of the string usernames of the users that have liked the specified video. 
+//	//	If the video is not found, a 404 error should be generated.	
+//	@RequestMapping(value=VideoSvcApi.VIDEO_SVC_PATH + "/{id}/likedby", method = RequestMethod.GET)
+//	public @ResponseBody List<String> getUsersWhoLikedVideo(
+//			@PathVariable("id") long id,
+//			HttpServletResponse response) throws IOException {
+//
+//		// Check if id exists in repository
+//		if (videos.exists(id) == false) {
+//			response.sendError(404);
+//			return null;
+//		}
+//		
+//		// Get video and list of usernames that like
+//		Video v = videos.findOne(id);
+//		List<String> likesUsernames = v.getLikesUsernames();  
+//
+//		return likesUsernames;
+//	}
 	
 //	
 //  Previous code from Assignment 1 use to store/retrieve binary video files
