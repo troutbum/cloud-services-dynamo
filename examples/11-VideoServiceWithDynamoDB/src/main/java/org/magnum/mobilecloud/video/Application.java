@@ -69,6 +69,7 @@ public class Application extends RepositoryRestMvcConfiguration {
         AmazonDynamoDB amazonDynamoDB = new AmazonDynamoDBClient(
                 amazonAWSCredentials());
         
+        // Fixes problem with DynamoDB connection?
         amazonDynamoDB.setRegion(Region.getRegion(Regions.US_WEST_2));
         
         return amazonDynamoDB;

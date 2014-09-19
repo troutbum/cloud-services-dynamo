@@ -13,6 +13,8 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -64,9 +66,13 @@ public class Application extends RepositoryRestMvcConfiguration {
 
     @Bean
     public AmazonDynamoDB amazonDynamoDB() {
-        AmazonDynamoDB amazonDynamoDB = new AmazonDynamoDBClient(
-                amazonAWSCredentials());
-        return amazonDynamoDB;
+    	AmazonDynamoDB amazonDynamoDB = new AmazonDynamoDBClient(
+    			amazonAWSCredentials());
+
+    	// Fixes problem with DynamoDB connection?
+    	amazonDynamoDB.setRegion(Region.getRegion(Regions.US_WEST_2));
+
+    	return amazonDynamoDB;
     }
 
     @Bean
