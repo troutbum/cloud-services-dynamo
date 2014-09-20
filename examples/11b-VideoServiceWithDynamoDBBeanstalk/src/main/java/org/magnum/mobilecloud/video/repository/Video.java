@@ -12,7 +12,12 @@ import com.google.common.base.Objects;
  * @author jules
  * 
  */
-@DynamoDBTable(tableName = "Video")
+
+// @DynamoDBTable(tableName = "Video"
+// FOUND PROBLEM WITH DynamoDB access via Elastic Beanstalk
+// Example 11 uses "Videos" and Example 11b uses "Video"
+
+@DynamoDBTable(tableName = "Videos")
 public class Video {
 
 	private String id;
