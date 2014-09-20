@@ -11,6 +11,7 @@ import java.security.Principal;
 import java.util.Collection;
 import java.util.List;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -47,12 +48,33 @@ public class VideoSvcDynamoDB {
 	
 	@Autowired
 	private VideoRepository videos;
+
+	
+	// GET /test?msg=hello!
+	// A test to see if we can talk to controller methods
+	
+	@RequestMapping(value="/test", method=RequestMethod.GET)
+	public void doTestGet(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
 		
-//	// GET /video 
-//	// Requests to VIDEO_SVC_PATH and returns the current list of 
-//	// videos in memory. Spring automatically converts
-//	// the list of videos to JSON because of the @ResponseBody
-//	// annotation.
+		// Set the content type header that is going to be returned in the
+		// HTTP response so that the client will know how to display the
+		// result.
+		resp.setContentType("text/plain");
+		String msg = req.getParameter("msg");
+		
+		// http://foo.bar?msg=asdf
+		
+		// Echo a response back to the client with the msg that was sent
+		resp.getWriter().write("Echo:"+ msg);
+	}
+	
+	
+	// GET /video 
+	// Requests to VIDEO_SVC_PATH and returns the current list of 
+	// videos in memory. Spring automatically converts
+	// the list of videos to JSON because of the @ResponseBody
+	// annotation.
 
 	@RequestMapping(value=VideoSvcApi.VIDEO_SVC_PATH, method=RequestMethod.GET)
 	public @ResponseBody Iterable<Video> getVideoList(){
